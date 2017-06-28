@@ -1,0 +1,6 @@
+framework module Pods_Qnite_for_Business {
+  umbrella header "Pods-Qnite for Business-umbrella.h"
+
+  export *
+  module * { export * }
+}
