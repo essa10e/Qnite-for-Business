@@ -9,7 +9,7 @@
 import UIKit
 import AVFoundation
 import FirebaseDatabase
-
+import SVProgressHUD
 
 class CameraViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate {
     
@@ -82,6 +82,11 @@ class CameraViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
         
     }
     
+    @IBAction func backButton(_ sender: Any) {
+        
+        self.dismiss(animated: true, completion: nil)
+        
+    }
     
     func captureOutput(_ captureOutput: AVCaptureOutput!, didOutputMetadataObjects metadataObjects: [Any]!, from connection: AVCaptureConnection!) {
         // Check if the metadataObjects array is not nil and it contains at least one object.
@@ -118,16 +123,19 @@ class CameraViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
                                 if FIRserialKey == QRSerialKey {
                                     self.messageLabel.text = "Serial Key \(FIRserialKey) confirmed!"
                                     DBProvider.Instance.usersRef.child(facebookID).child("Cover").child("Scanned").setValue(true)
-                                    //self.dismiss(animated: true, completion: nil)
+                                    self.showSuccess(name: "Francesco Virga")
+                                    
                                 }
                                 else {
-                                    self.messageLabel.text = "FIR serial key: \(FIRserialKey) does not agree with QR serial key: \(String(describing: QRSerialKey))"
+                                    self.showError(status: "QR code does not match")
+                                    self.messageLabel.text = "QR code does not match"
                                 }
                             }
                         }
                         else {
                             // code has already been scanned
-                            self.messageLabel.text = "Serial Key \(String(describing: QRSerialKey)) already used!"
+                            self.showError(status: "QR code has already been scanned. Serial Key: \(String(describing: QRSerialKey))")
+                            self.messageLabel.text = "QR code has already been scanned. Serial Key: \(String(describing: QRSerialKey))"
                         }
                     }
                 }
@@ -137,10 +145,28 @@ class CameraViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
         
     }
     
-    @IBAction func backButton(_ sender: Any) {
-        self.dismiss(animated: true, completion: nil)
+    func showError(status: String) {
+        
+        captureSession?.stopRunning()
+        SVProgressHUD.setFadeInAnimationDuration(0.3)
+        SVProgressHUD.setFadeOutAnimationDuration(0.3)
+        SVProgressHUD.showError(withStatus: status)
+        SVProgressHUD.dismiss(withDelay: 1.5) {
+            self.captureSession?.startRunning()
+        }
     }
     
     
-    
+    func showSuccess(name: String) {
+        
+        captureSession?.stopRunning()
+        SVProgressHUD.setFadeInAnimationDuration(0.3)
+        SVProgressHUD.setFadeOutAnimationDuration(0.3)
+        SVProgressHUD.showSuccess(withStatus: "\(name)")
+        
+        SVProgressHUD.dismiss(withDelay: 1.5) {
+            
+            self.dismiss(animated: true, completion: nil)
+        }
+    }
 }

@@ -32,6 +32,9 @@ class AuthProvider {
             if error != nil {
                 self.handleErrors(err: error! as NSError, loginHandler: loginHandler)
             }
+            else {
+                loginHandler?(nil)
+            }
         })
     }
     

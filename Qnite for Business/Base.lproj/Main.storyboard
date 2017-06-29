@@ -104,7 +104,7 @@
                                         <fontDescription key="fontDescription" type="system" weight="light" pointSize="20"/>
                                         <state key="normal" title="Back"/>
                                         <connections>
-                                            <action selector="backButton:" destination="Ude-nR-qyu" eventType="touchUpInside" id="vTX-Jw-r9g"/>
+                                            <action selector="backButton:" destination="Ude-nR-qyu" eventType="touchUpInside" id="HNN-ca-UCT"/>
                                         </connections>
                                     </button>
                                 </subviews>
