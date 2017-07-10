@@ -8,7 +8,7 @@
 
 import UIKit
 import NotificationCenter
-
+import FirebaseDatabase
 
 
 class ScannerViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchResultsUpdating {
@@ -18,11 +18,17 @@ class ScannerViewController: UIViewController, UITableViewDelegate, UITableViewD
         var size = String()
     }
     
+    // add observer to update dictionary if new person has paid
+    
     @IBOutlet weak var venueButton: UIButton!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var searchBarView: UIView!
 
-
+    var IdDidScan = [String: Any]()
+    var nameDidScan = [String: Any]()
+    
+    let dateFormat = DateFormatter()
+    
     let venues: [String] = ["Ale House", "Stages"]
     var index: Int = 0
 
@@ -33,18 +39,24 @@ class ScannerViewController: UIViewController, UITableViewDelegate, UITableViewD
                 "Jacksonville, FL", "San Francisco, CA", "Columbus, OH", "Austin, TX",
                 "Memphis, TN", "Baltimore, MD", "Charlotte, ND", "Fort Worth, TX"]
     
-    var filteredData: [String]!
+    var filteredData: [String: Any]!
     
     var searchController: UISearchController!
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        dateFormat.dateFormat = DATE_FORMAT
+        
+        fetchCoverData()
+        
         venueButton.setTitle(venues[index], for: .normal)
         
         tableView.dataSource = self
+        tableView.delegate = self
         
-        filteredData = []
+        filteredData = [:]
         
         tableView.isHidden = true
         
@@ -65,6 +77,39 @@ class ScannerViewController: UIViewController, UITableViewDelegate, UITableViewD
         // Sets this view controller as presenting view controller for the search interface
         definesPresentationContext = true
     }
+    
+    func observeChanges() {
+        
+    }
+    
+    func fetchCoverData() {
+        
+        DBProvider.Instance.eventRef.child("1378406678918207").child(dateFormat.string(from: Date())).child("Users Attending").observeSingleEvent(of: .value) { (snapshot: FIRDataSnapshot) in
+            if let data = snapshot.value as? [String: Any] {
+                for (key,value) in data {
+                    if let userData = value as? [String: Any] {
+                        if let didScan = userData["Scanned"] as? Bool {
+                            self.IdDidScan.updateValue(didScan, forKey: key)
+                        }
+                    }
+                }
+            }
+        }
+        
+        DBProvider.Instance.usersRef.observeSingleEvent(of: .value) { (snapshot: FIRDataSnapshot) in
+            if let data = snapshot.value as? [String: Any] {
+                for (key,value) in data {
+                    if let didScan = self.IdDidScan[key] as? Bool {
+                        if let userData = value as? [String: Any] {
+                            if let name = userData["Name"] as? String {
+                                self.nameDidScan.updateValue(didScan, forKey: name)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     
     @IBAction func venueChoice(_ sender: Any) {
@@ -81,9 +126,23 @@ class ScannerViewController: UIViewController, UITableViewDelegate, UITableViewD
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell")
         //let cell: UITableViewCell = UITableViewCell(style: UITableViewCellStyle.subtitle, reuseIdentifier: "cell")
-        cell?.textLabel?.text = filteredData[indexPath.row]
-        cell?.detailTextLabel?.text = "Subtitlie"
+        //cell?.textLabel?.text = filteredData[indexPath.row]
+        //cell?.detailTextLabel?.text = "Subtitlie"
+    
+        let key = Array(filteredData.keys)[indexPath.row]
+        let value = filteredData[key] as! Bool
+        //let value = array[indexPath.row]
         
+        cell?.textLabel?.text = key
+        
+        if value {
+            cell?.detailTextLabel?.text = "Scanned"
+        }
+        else {
+            cell?.detailTextLabel?.text = "Hasn't Scanned"
+        }
+        
+
         return cell!
     }
     
@@ -94,11 +153,24 @@ class ScannerViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     func updateSearchResults(for searchController: UISearchController) {
         // If we haven't typed anything into the search bar then do not filter the results
+        
+        let keys: [String] = Array(nameDidScan.keys)
+        //let values = Array(nameDidScan.values)
+        
         if searchController.searchBar.text! == "" {
-            filteredData = []
-        } else {
-            // Filter the results
-            filteredData = data.filter { $0.lowercased().contains(searchController.searchBar.text!.lowercased()) }
+            filteredData = [:]
+        }
+        else {
+            let filteredKeys = keys.filter { $0.lowercased().contains(searchController.searchBar.text!.lowercased()) }
+            
+            if filteredKeys.isEmpty {
+                filteredData = [:]
+            }
+            else {
+                for key in filteredKeys {
+                    filteredData.updateValue(nameDidScan[key]!, forKey: key)
+                }
+            }
         }
         tableView.isHidden = false
         self.tableView.reloadData()
@@ -110,9 +182,16 @@ class ScannerViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
+        if Array(filteredData.values)[indexPath.row] as! Bool {
+            
+        }
+        else {
+            confirmAlert(title: "Update Status", message: "Change \(Array(filteredData.keys)[indexPath.row])'s status to 'Scanned'?") { (action) in
+                
+            }
+        }
     }
-    
+
     /*
     
     func updateSearchResults(for searchController: UISearchController) {
@@ -160,4 +239,13 @@ class ScannerViewController: UIViewController, UITableViewDelegate, UITableViewD
      
      tableView.reloadData()
      }*/
+    
+    func confirmAlert(title: String, message: String, yesHandler: @escaping (UIAlertAction) -> Void) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let yes = UIAlertAction(title: "Yes", style: .default, handler: yesHandler)
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        alert.addAction(yes)
+        alert.addAction(cancel)
+        present(alert, animated: true, completion: nil)
+    }
 }

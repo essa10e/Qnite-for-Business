@@ -82,11 +82,11 @@
                                 <rect key="frame" x="0.0" y="184" width="375" height="313"/>
                                 <color key="backgroundColor" red="0.48725587844103868" green="0.48490198530847328" blue="0.48960977157360408" alpha="0.32649293664383561" colorSpace="custom" customColorSpace="displayP3"/>
                                 <prototypes>
-                                    <tableViewCell opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="cell" textLabel="qGX-ha-fFH" detailTextLabel="dS0-uX-gce" style="IBUITableViewCellStyleSubtitle" id="nzX-TP-bDc">
+                                    <tableViewCell opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="cell" textLabel="qGX-ha-fFH" detailTextLabel="dS0-uX-gce" style="IBUITableViewCellStyleSubtitle" id="nzX-TP-bDc">
                                         <rect key="frame" x="0.0" y="28" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="nzX-TP-bDc" id="wCH-E2-sqW">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="342" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="qGX-ha-fFH">

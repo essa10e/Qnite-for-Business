@@ -11,6 +11,7 @@
 		794C468A1F045BB200AF8EA7 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794C46891F045BB200AF8EA7 /* LoginViewController.swift */; };
 		794C468C1F045D2E00AF8EA7 /* AuthProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794C468B1F045D2E00AF8EA7 /* AuthProvider.swift */; };
 		794C468E1F045D5F00AF8EA7 /* FBProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794C468D1F045D5F00AF8EA7 /* FBProvider.swift */; };
+		795BDEA71F1412F9001582A7 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 795BDEA61F1412F9001582A7 /* Constants.swift */; };
 		797E87EC1F045A2600329961 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 797E87EB1F045A2600329961 /* GoogleService-Info.plist */; };
 		79A17F0C1F02FD2000665DE6 /* DBProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A17F0B1F02FD2000665DE6 /* DBProvider.swift */; };
 		79AE07511F02D251003E7356 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AE07501F02D251003E7356 /* AppDelegate.swift */; };
@@ -30,6 +31,7 @@
 		794C46891F045BB200AF8EA7 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		794C468B1F045D2E00AF8EA7 /* AuthProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthProvider.swift; sourceTree = "<group>"; };
 		794C468D1F045D5F00AF8EA7 /* FBProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FBProvider.swift; sourceTree = "<group>"; };
+		795BDEA61F1412F9001582A7 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		797E87EB1F045A2600329961 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		79A17F0B1F02FD2000665DE6 /* DBProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DBProvider.swift; sourceTree = "<group>"; };
 		79AE074D1F02D251003E7356 /* Qnite for Business.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Qnite for Business.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -102,6 +104,7 @@
 				794C46891F045BB200AF8EA7 /* LoginViewController.swift */,
 				794C468B1F045D2E00AF8EA7 /* AuthProvider.swift */,
 				794C468D1F045D5F00AF8EA7 /* FBProvider.swift */,
+				795BDEA61F1412F9001582A7 /* Constants.swift */,
 			);
 			path = "Qnite for Business";
 			sourceTree = "<group>";
@@ -241,6 +244,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				79AE07631F02DF4F003E7356 /* DataGenerator.swift in Sources */,
+				795BDEA71F1412F9001582A7 /* Constants.swift in Sources */,
 				79AE07691F02E552003E7356 /* ScannerViewController.swift in Sources */,
 				79AE07671F02E53B003E7356 /* CameraViewController.swift in Sources */,
 				79A17F0C1F02FD2000665DE6 /* DBProvider.swift in Sources */,
