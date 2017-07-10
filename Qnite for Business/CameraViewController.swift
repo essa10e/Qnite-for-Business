@@ -20,14 +20,24 @@ class CameraViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
     var captureSession:AVCaptureSession?
     var videoPreviewLayer:AVCaptureVideoPreviewLayer?
     var qrCodeFrameView:UIView?
+    var venue: String?
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        
+        NotificationCenter.default.addObserver(forName: NSNotification.Name("Venue Name"), object: nil, queue: nil) { (notification) in
+            if let venueName = notification.object as? String {
+                self.venue = venueName
+            }
+        }
+        
         initScanner()
         captureSession?.startRunning()
         view.bringSubview(toFront: messageLabel)
         view.bringSubview(toFront: scannerLabelView)
         initQRframe()
+        
     }
     
     func initScanner() {
@@ -91,6 +101,12 @@ class CameraViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
                 let QRSerialKey: String = QRdata[1]
                 
                 // Compare QR data with Firebase and show appropriate messages
+                
+                
+                
+               //DBProvider.Instance.eventRef.child(venue).child(Date).child(facebookID).observeSingleEvent(of: .value) { (snapshot: FIRDataSnapshot) in
+
+                
                 DBProvider.Instance.usersRef.child(facebookID).observeSingleEvent(of: .value) { (snapshot: FIRDataSnapshot) in
                     if let data = snapshot.value as? [String: Any] {
                         if let cover = data["Cover"] as? [String: Any] {
