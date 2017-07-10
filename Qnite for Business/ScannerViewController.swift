@@ -59,6 +59,7 @@ class ScannerViewController: UIViewController, UITableViewDelegate, UITableViewD
         searchController.dimsBackgroundDuringPresentation = false
         
         searchController.searchBar.sizeToFit()
+        searchController.searchBar.placeholder = "Search Cover Purchases"
         //tableView.tableHeaderView = searchController.searchBar
         searchBarView.addSubview(searchController.searchBar)
         // Sets this view controller as presenting view controller for the search interface
