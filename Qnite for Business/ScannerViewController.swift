@@ -9,7 +9,7 @@
 import UIKit
 import NotificationCenter
 import FirebaseDatabase
-
+import SVProgressHUD
 
 class ScannerViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchResultsUpdating {
     
@@ -21,6 +21,7 @@ class ScannerViewController: UIViewController, UITableViewDelegate, UITableViewD
 
     var IdDidScan = [String: Any]()
     var nameDidScan = [String: Any]()
+    var nameIDs = [String: Any]()
     
     let venues: [String] = ["Ale House", "Stages"]
     var index: Int = 0
@@ -88,6 +89,7 @@ class ScannerViewController: UIViewController, UITableViewDelegate, UITableViewD
                         if let userData = value as? [String: Any] {
                             if let name = userData["Name"] as? String {
                                 self.nameDidScan.updateValue(didScan, forKey: name)
+                                self.nameIDs.updateValue(key, forKey: name)
                             }
                         }
                     }
@@ -129,7 +131,6 @@ class ScannerViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     func updateSearchResults(for searchController: UISearchController) {
-
         let keys: [String] = Array(nameDidScan.keys)
         //let values = Array(nameDidScan.values)
         
@@ -157,63 +158,29 @@ class ScannerViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let name = Array(filteredData.keys)[indexPath.row]
+        
         if Array(filteredData.values)[indexPath.row] as! Bool {
             
         }
         else {
-            confirmAlert(title: "Update Status", message: "Change \(Array(filteredData.keys)[indexPath.row])'s status to 'Scanned'?") { (action) in
-                
+            confirmAlert(title: "Update Status", message: "Change \(name)'s status to 'Scanned'?") { (action) in
+                DBProvider.Instance.eventRef.child("1378406678918207").child(Constants.Instance.getFIRDateInFormat()).child("Users Attending").child(self.nameIDs[name] as! String).child("Scanned").setValue(true)
+                self.fetchCoverData()
+                self.searchController.searchBar.text = ""
+                self.showSuccess(name: name)
             }
         }
     }
-
-    /*
     
-    func updateSearchResults(for searchController: UISearchController) {
-        // If we haven't typed anything into the search bar then do not filter the results
-        if searchController.searchBar.text! == "" {
-            filteredCakes = cakes
-        } else {
-            // Filter the results
-            filteredCakes = cakes.filter { $0.name.lowercased().contains(searchController.searchBar.text!.lowercased()) }
+    func showSuccess(name: String) {
+        SVProgressHUD.setFadeInAnimationDuration(0.2)
+        SVProgressHUD.setFadeOutAnimationDuration(0.2)
+        SVProgressHUD.showSuccess(withStatus: "\(name)")
+        SVProgressHUD.dismiss(withDelay: 1) {
+            self.dismiss(animated: true, completion: nil)
         }
-        
-        self.tableView.reloadData()
     }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.filteredCakes.count
-    }
-    
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell 	{
-        let cell: UITableViewCell = UITableViewCell(style: UITableViewCellStyle.subtitle, reuseIdentifier: "cell")
-        
-        cell.textLabel?.text = self.filteredCakes[indexPath.row].name
-        cell.detailTextLabel?.text = self.filteredCakes[indexPath.row].size
-        
-        return cell
-    }
-    
-
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("Row \(indexPath.row) selected")
-    }
- */
-    
-    /*
-     func updateSearchResults(for searchController: UISearchController) {
-     filterContentForSearchText(searchController.searchBar.text!)
-     }
-     
-     func filterContentForSearchText(searchText: String, scope: String = "All") {
-     filteredCandies = candies.filter { candy in
-     return candy.name.lowercaseString.containsString(searchText.lowercaseString)
-     }
-     
-     tableView.reloadData()
-     }*/
     
     func confirmAlert(title: String, message: String, yesHandler: @escaping (UIAlertAction) -> Void) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
@@ -224,3 +191,51 @@ class ScannerViewController: UIViewController, UITableViewDelegate, UITableViewD
         present(alert, animated: true, completion: nil)
     }
 }
+
+/*
+ 
+ func updateSearchResults(for searchController: UISearchController) {
+ // If we haven't typed anything into the search bar then do not filter the results
+ if searchController.searchBar.text! == "" {
+ filteredCakes = cakes
+ } else {
+ // Filter the results
+ filteredCakes = cakes.filter { $0.name.lowercased().contains(searchController.searchBar.text!.lowercased()) }
+ }
+ 
+ self.tableView.reloadData()
+ }
+ 
+ func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+ return self.filteredCakes.count
+ }
+ 
+ 
+ func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell 	{
+ let cell: UITableViewCell = UITableViewCell(style: UITableViewCellStyle.subtitle, reuseIdentifier: "cell")
+ 
+ cell.textLabel?.text = self.filteredCakes[indexPath.row].name
+ cell.detailTextLabel?.text = self.filteredCakes[indexPath.row].size
+ 
+ return cell
+ }
+ 
+ 
+ 
+ func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+ print("Row \(indexPath.row) selected")
+ }
+ */
+
+/*
+ func updateSearchResults(for searchController: UISearchController) {
+ filterContentForSearchText(searchController.searchBar.text!)
+ }
+ 
+ func filterContentForSearchText(searchText: String, scope: String = "All") {
+ filteredCandies = candies.filter { candy in
+ return candy.name.lowercaseString.containsString(searchText.lowercaseString)
+ }
+ 
+ tableView.reloadData()
+ }*/
