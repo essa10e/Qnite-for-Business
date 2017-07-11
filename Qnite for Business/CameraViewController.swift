@@ -77,7 +77,7 @@ class CameraViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
         view.addSubview(qrCodeFrameView!)
         view.bringSubview(toFront: qrCodeFrameView!)
     }
-
+    
     
     func captureOutput(_ captureOutput: AVCaptureOutput!, didOutputMetadataObjects metadataObjects: [Any]!, from connection: AVCaptureConnection!) {
         
@@ -101,38 +101,44 @@ class CameraViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
                 let QRSerialKey: String = QRdata[1]
                 
                 // Compare QR data with Firebase and show appropriate messages
-                
-                
-                
-               //DBProvider.Instance.eventRef.child(venue).child(Date).child(facebookID).observeSingleEvent(of: .value) { (snapshot: FIRDataSnapshot) in
-
-                
-                DBProvider.Instance.usersRef.child(facebookID).observeSingleEvent(of: .value) { (snapshot: FIRDataSnapshot) in
+            
+                DBProvider.Instance.eventRef.child("1378406678918207").child(Constants.Instance.getFIRDateInFormat()).child("Users Attending").child(facebookID).observeSingleEvent(of: .value) { (snapshot: FIRDataSnapshot) in
+   
                     if let data = snapshot.value as? [String: Any] {
-                        if let cover = data["Cover"] as? [String: Any] {
-                            if (cover["Scanned"] as? Bool) == false {
-                                if let FIRserialKey = cover["Serial"] as? String {
-                                    if FIRserialKey == QRSerialKey {
-                                        self.messageLabel.text = FIRserialKey
-                                        DBProvider.Instance.usersRef.child(facebookID).child("Cover").child("Scanned").setValue(true)
-                                        if let name = data["Name"] as? String {
+                        if (data["Scanned"] as? Bool) == false {
+                            self.captureSession?.stopRunning()
+                            
+                            //start activity indicator
+                            
+                            if let FIRserialKey = data["Serial"] as? String {
+                                if FIRserialKey == QRSerialKey {
+                                    self.messageLabel.text = FIRserialKey
+                                    
+                                    DBProvider.Instance.eventRef.child("1378406678918207").child(Constants.Instance.getFIRDateInFormat()).child("Users Attending").child(facebookID).child("Scanned").setValue(true)
+                                    
+                                    DBProvider.Instance.usersRef.child(facebookID).child("Name").observeSingleEvent(of: .value, with: { (snapshot: FIRDataSnapshot) in
+                                        
+                                        
+                                        
+                                        if let name = snapshot.value as? String {
                                             self.showSuccess(name: name)
                                         }
                                         else {
-                                            self.showSuccess(name: "")
+                                            self.showSuccess(name: "No name found")
                                         }
-                                    }
-                                    else { // code does not match
-                                        self.showError(status: "QR code does not have a valid match")
-                                    }
+                                    }) 
+                                }
+                                else { // code does not match
+                                    self.showError(status: "QR code does not have a valid match")
                                 }
                             }
-                            else {
-                                // code has already been scanned
-                                self.showError(status: "QR code has already been used")
-                            }
                         }
-  
+                        else {
+                            // code has already been scanned
+                            self.showError(status: "QR code has already been used")
+                        }
+                        
+                        
                     }
                 }
             }
@@ -142,6 +148,9 @@ class CameraViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
     }
     
     func showError(status: String) {
+        
+        // stop activity indicator
+        
         self.messageLabel.text = "QR code has already been used"
         captureSession?.stopRunning()
         SVProgressHUD.setFadeInAnimationDuration(0.2)
@@ -155,7 +164,9 @@ class CameraViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
     }
     
     func showSuccess(name: String) {
-        captureSession?.stopRunning()
+        
+        // stop activity indicator
+        
         SVProgressHUD.setFadeInAnimationDuration(0.2)
         SVProgressHUD.setFadeOutAnimationDuration(0.2)
         SVProgressHUD.showSuccess(withStatus: "\(name)")

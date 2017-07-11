@@ -78,7 +78,7 @@
                                     <constraint firstAttribute="height" constant="44" id="AaF-z5-Vup"/>
                                 </constraints>
                             </view>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="OIh-8M-TxF">
+                            <tableView hidden="YES" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="OIh-8M-TxF">
                                 <rect key="frame" x="0.0" y="184" width="375" height="313"/>
                                 <color key="backgroundColor" red="0.48725587844103868" green="0.48490198530847328" blue="0.48960977157360408" alpha="0.32649293664383561" colorSpace="custom" customColorSpace="displayP3"/>
                                 <prototypes>

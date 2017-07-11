@@ -13,11 +13,6 @@ import FirebaseDatabase
 
 class ScannerViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchResultsUpdating {
     
-    struct Cake {
-        var name = String()
-        var size = String()
-    }
-    
     // add observer to update dictionary if new person has paid
     
     @IBOutlet weak var venueButton: UIButton!
@@ -27,17 +22,8 @@ class ScannerViewController: UIViewController, UITableViewDelegate, UITableViewD
     var IdDidScan = [String: Any]()
     var nameDidScan = [String: Any]()
     
-    let dateFormat = DateFormatter()
-    
     let venues: [String] = ["Ale House", "Stages"]
     var index: Int = 0
-
-    
-    let data = ["New York, NY", "Los Angeles, CA", "Chicago, IL", "Houston, TX",
-                "Philadelphia, PA", "Phoenix, AZ", "San Diego, CA", "San Antonio, TX",
-                "Dallas, TX", "Detroit, MI", "San Jose, CA", "Indianapolis, IN",
-                "Jacksonville, FL", "San Francisco, CA", "Columbus, OH", "Austin, TX",
-                "Memphis, TN", "Baltimore, MD", "Charlotte, ND", "Fort Worth, TX"]
     
     var filteredData: [String: Any]!
     
@@ -47,18 +33,16 @@ class ScannerViewController: UIViewController, UITableViewDelegate, UITableViewD
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        dateFormat.dateFormat = DATE_FORMAT
         
         fetchCoverData()
-        
+        observeChanges()
         venueButton.setTitle(venues[index], for: .normal)
         
         tableView.dataSource = self
         tableView.delegate = self
+        tableView.isHidden = true
         
         filteredData = [:]
-        
-        tableView.isHidden = true
         
         // Initializing with searchResultsController set to nil means that
         // searchController will use this view controller to display the search results
@@ -79,12 +63,13 @@ class ScannerViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     func observeChanges() {
-        
+        DBProvider.Instance.eventRef.child("1378406678918207").child(Constants.Instance.getFIRDateInFormat()).child("Users Attending").observe(.childAdded) { (snapshot: FIRDataSnapshot) in
+            self.fetchCoverData()
+        }
     }
     
     func fetchCoverData() {
-        
-        DBProvider.Instance.eventRef.child("1378406678918207").child(dateFormat.string(from: Date())).child("Users Attending").observeSingleEvent(of: .value) { (snapshot: FIRDataSnapshot) in
+        DBProvider.Instance.eventRef.child("1378406678918207").child(Constants.Instance.getFIRDateInFormat()).child("Users Attending").observeSingleEvent(of: .value) { (snapshot: FIRDataSnapshot) in
             if let data = snapshot.value as? [String: Any] {
                 for (key,value) in data {
                     if let userData = value as? [String: Any] {
@@ -110,7 +95,6 @@ class ScannerViewController: UIViewController, UITableViewDelegate, UITableViewD
             }
         }
     }
-
     
     @IBAction func venueChoice(_ sender: Any) {
         if index < (venues.count - 1) {
@@ -124,15 +108,10 @@ class ScannerViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell")
-        //let cell: UITableViewCell = UITableViewCell(style: UITableViewCellStyle.subtitle, reuseIdentifier: "cell")
-        //cell?.textLabel?.text = filteredData[indexPath.row]
-        //cell?.detailTextLabel?.text = "Subtitlie"
-    
         let key = Array(filteredData.keys)[indexPath.row]
         let value = filteredData[key] as! Bool
-        //let value = array[indexPath.row]
-        
         cell?.textLabel?.text = key
         
         if value {
@@ -141,19 +120,16 @@ class ScannerViewController: UIViewController, UITableViewDelegate, UITableViewD
         else {
             cell?.detailTextLabel?.text = "Hasn't Scanned"
         }
-        
-
+    
         return cell!
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return filteredData.count
     }
-
     
     func updateSearchResults(for searchController: UISearchController) {
-        // If we haven't typed anything into the search bar then do not filter the results
-        
+
         let keys: [String] = Array(nameDidScan.keys)
         //let values = Array(nameDidScan.values)
         
@@ -161,22 +137,21 @@ class ScannerViewController: UIViewController, UITableViewDelegate, UITableViewD
             filteredData = [:]
         }
         else {
-            let filteredKeys = keys.filter { $0.lowercased().contains(searchController.searchBar.text!.lowercased()) }
+            let text = searchController.searchBar.text!.lowercased()
+            let filteredKeys = keys.filter { $0.lowercased().contains(text) }
             
-            if filteredKeys.isEmpty {
-                filteredData = [:]
-            }
-            else {
+            filteredData = [:]
+            if !filteredKeys.isEmpty {
                 for key in filteredKeys {
                     filteredData.updateValue(nameDidScan[key]!, forKey: key)
                 }
             }
         }
         tableView.isHidden = false
-        self.tableView.reloadData()
-        var newFrame: CGRect = self.tableView.frame;
-        newFrame.size.height = self.tableView.contentSize.height;
-        self.tableView.frame = newFrame;
+        tableView.reloadData()
+        var newFrame: CGRect = tableView.frame;
+        newFrame.size.height = tableView.contentSize.height;
+        tableView.frame = newFrame;
     }
 
     
