@@ -25,11 +25,9 @@ class CameraViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
-        NotificationCenter.default.addObserver(forName: NSNotification.Name("Venue Name"), object: nil, queue: nil) { (notification) in
-            if let venueName = notification.object as? String {
-                self.venue = venueName
-            }
+       
+        if let venueName = FacebookUser.Instance.pageName {
+            self.venue = venueName
         }
         
         initScanner()
@@ -102,21 +100,21 @@ class CameraViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
                 
                 // Compare QR data with Firebase and show appropriate messages
             
-                DBProvider.Instance.eventRef.child("1378406678918207").child(Constants.Instance.getFIRDateInFormat()).child("Users Attending").child(facebookID).observeSingleEvent(of: .value) { (snapshot: FIRDataSnapshot) in
+                DBProvider.Instance.eventRef.child(FacebookUser.Instance.pageId!).child(Constants.Instance.getDateInDBFormat()).child(FIR_EVENT_DATA.USERS_ATTENDING).child(facebookID).observeSingleEvent(of: .value) { (snapshot: FIRDataSnapshot) in
    
                     if let data = snapshot.value as? [String: Any] {
-                        if (data["Scanned"] as? Bool) == false {
+                        if (data[FIR_EVENT_DATA.DID_SCAN] as? Bool) == false {
                             self.captureSession?.stopRunning()
                             
                             //start activity indicator
                             
-                            if let FIRserialKey = data["Serial"] as? String {
+                            if let FIRserialKey = data[FIR_EVENT_DATA.COVER_ID] as? String {
                                 if FIRserialKey == QRSerialKey {
                                     self.messageLabel.text = FIRserialKey
                                     
-                                    DBProvider.Instance.eventRef.child("1378406678918207").child(Constants.Instance.getFIRDateInFormat()).child("Users Attending").child(facebookID).child("Scanned").setValue(true)
+                                    DBProvider.Instance.eventRef.child(FacebookUser.Instance.pageId!).child(Constants.Instance.getDateInDBFormat()).child(FIR_EVENT_DATA.USERS_ATTENDING).child(facebookID).child(FIR_EVENT_DATA.DID_SCAN).setValue(true)
                                     
-                                    DBProvider.Instance.usersRef.child(facebookID).child("Name").observeSingleEvent(of: .value, with: { (snapshot: FIRDataSnapshot) in
+                                    DBProvider.Instance.usersRef.child(facebookID).child("name").observeSingleEvent(of: .value, with: { (snapshot: FIRDataSnapshot) in
                                         
                                         
                                         

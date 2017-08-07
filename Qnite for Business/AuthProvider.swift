@@ -19,12 +19,17 @@ class AuthProvider {
         return _instance
     }
     
+    let fetchFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MM/dd/yyyy"
+        return formatter
+    }()
+    
+    
     func login(loginHandler: LoginHandler?) { // need to handle when user declines permissions
-        
-        
         let accessToken =  FBSDKAccessToken.current()
         guard let accessTokenString = accessToken?.tokenString else {
-            loginHandler?("You need to login to Facebook to use Qnight")
+            loginHandler?("You need to login to Facebook to use Qnite")
             return
         }
         let credentials = FIRFacebookAuthProvider.credential(withAccessToken: accessTokenString)
@@ -33,10 +38,45 @@ class AuthProvider {
                 self.handleErrors(err: error! as NSError, loginHandler: loginHandler)
             }
             else {
-                loginHandler?(nil)
+                self.fetchData(loginHandler: loginHandler)
             }
         })
+        
     }
+    
+    func fetchData(loginHandler: LoginHandler?) {
+        FBProvider.Instance.graphRequest(pageID: "/me", fetchParameters: FB_USER_FETCH_PARAMS) { (connection, result, error) in
+            if error != nil {
+                // graph request fail
+                return
+            }
+            let allResults = result as! [String: AnyObject]
+            let id = allResults["id"] as? String
+            let name = allResults["name"] as? String
+            var email = allResults["email"] as? String
+            let gender = allResults["gender"] as? String
+            var birthday = allResults["birthday"] as? String
+            
+            let birthdayComp: Date = self.fetchFormatter.date(from: birthday!)!
+            let ageComponents = Calendar.current.dateComponents([.year], from: birthdayComp, to: Date())
+            let age = ageComponents.year!
+            
+            DBProvider.Instance.saveUser(name: name!, birthday: &birthday, gender: gender!, email: &email, fbid: id!)
+            FacebookUser.Instance.set(userName: name!, userAge: age, userGender: gender!, userID: id!)
+//            
+//            if email != nil {
+//                Crashlytics.sharedInstance().setUserEmail(email)
+//            }
+//            Crashlytics.sharedInstance().setUserIdentifier(id)
+//            Crashlytics.sharedInstance().setUserName(name)
+//            
+            loginHandler?(nil)
+            
+        }
+        
+    }
+    
+    
     
     func logout() -> Bool {
         

@@ -15,7 +15,7 @@ class ScannerViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     // add observer to update dictionary if new person has paid
     
-    @IBOutlet weak var venueButton: UIButton!
+    @IBOutlet weak var pageSubtitle: UILabel!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var searchBarView: UIView!
 
@@ -23,8 +23,8 @@ class ScannerViewController: UIViewController, UITableViewDelegate, UITableViewD
     var nameDidScan = [String: Any]()
     var nameIDs = [String: Any]()
     
-    let venues: [String] = ["Ale House", "Stages"]
-    var index: Int = 0
+    //let venues: [String] = ["Ale House", "Stages"]
+    //var index: Int = 0
     
     var filteredData: [String: Any]!
     
@@ -34,10 +34,10 @@ class ScannerViewController: UIViewController, UITableViewDelegate, UITableViewD
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
         fetchCoverData()
         observeChanges()
-        venueButton.setTitle(venues[index], for: .normal)
+        //venueButton.setTitle(venues[index], for: .normal)
+        pageSubtitle.text = FacebookUser.Instance.pageName
         
         tableView.dataSource = self
         tableView.delegate = self
@@ -64,17 +64,17 @@ class ScannerViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     func observeChanges() {
-        DBProvider.Instance.eventRef.child("1378406678918207").child(Constants.Instance.getFIRDateInFormat()).child("Users Attending").observe(.childAdded) { (snapshot: FIRDataSnapshot) in
+        DBProvider.Instance.eventRef.child(FacebookUser.Instance.pageId!).child(Constants.Instance.getDateInDBFormat()).child(FIR_EVENT_DATA.USERS_ATTENDING).observe(.childAdded) { (snapshot: FIRDataSnapshot) in
             self.fetchCoverData()
         }
     }
     
     func fetchCoverData() {
-        DBProvider.Instance.eventRef.child("1378406678918207").child(Constants.Instance.getFIRDateInFormat()).child("Users Attending").observeSingleEvent(of: .value) { (snapshot: FIRDataSnapshot) in
+        DBProvider.Instance.eventRef.child(FacebookUser.Instance.pageId!).child(Constants.Instance.getDateInDBFormat()).child(FIR_EVENT_DATA.USERS_ATTENDING).observeSingleEvent(of: .value) { (snapshot: FIRDataSnapshot) in
             if let data = snapshot.value as? [String: Any] {
                 for (key,value) in data {
                     if let userData = value as? [String: Any] {
-                        if let didScan = userData["Scanned"] as? Bool {
+                        if let didScan = userData[FIR_EVENT_DATA.DID_SCAN] as? Bool {
                             self.IdDidScan.updateValue(didScan, forKey: key)
                         }
                     }
@@ -87,7 +87,7 @@ class ScannerViewController: UIViewController, UITableViewDelegate, UITableViewD
                 for (key,value) in data {
                     if let didScan = self.IdDidScan[key] as? Bool {
                         if let userData = value as? [String: Any] {
-                            if let name = userData["Name"] as? String {
+                            if let name = userData["name"] as? String {
                                 self.nameDidScan.updateValue(didScan, forKey: name)
                                 self.nameIDs.updateValue(key, forKey: name)
                             }
@@ -97,17 +97,17 @@ class ScannerViewController: UIViewController, UITableViewDelegate, UITableViewD
             }
         }
     }
-    
-    @IBAction func venueChoice(_ sender: Any) {
-        if index < (venues.count - 1) {
-            index += 1
-        }
-        else {
-            index = 0
-        }
-        venueButton.setTitle(venues[index], for: .normal)
-        NotificationCenter.default.post(name: NSNotification.Name("Venue Name"), object: venues[index])
-    }
+//    
+//    @IBAction func venueChoice(_ sender: Any) {
+//        if index < (venues.count - 1) {
+//            index += 1
+//        }
+//        else {
+//            index = 0
+//        }
+//        venueButton.setTitle(venues[index], for: .normal)
+//        NotificationCenter.default.post(name: NSNotification.Name("Venue Name"), object: venues[index])
+//    }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
@@ -165,7 +165,7 @@ class ScannerViewController: UIViewController, UITableViewDelegate, UITableViewD
         }
         else {
             confirmAlert(title: "Update Status", message: "Change \(name)'s status to 'Scanned'?") { (action) in
-                DBProvider.Instance.eventRef.child("1378406678918207").child(Constants.Instance.getFIRDateInFormat()).child("Users Attending").child(self.nameIDs[name] as! String).child("Scanned").setValue(true)
+                DBProvider.Instance.eventRef.child(FacebookUser.Instance.pageId!).child(Constants.Instance.getDateInDBFormat()).child(FIR_EVENT_DATA.USERS_ATTENDING).child(self.nameIDs[name] as! String).child(FIR_EVENT_DATA.DID_SCAN).setValue(true)
                 self.fetchCoverData()
                 self.searchController.searchBar.text = ""
                 self.showSuccess(name: name)

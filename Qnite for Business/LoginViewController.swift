@@ -8,6 +8,7 @@
 
 import UIKit
 import FBSDKLoginKit
+import FirebaseDatabase
 
 class LoginViewController: UIViewController, FBSDKLoginButtonDelegate {
     
@@ -28,13 +29,30 @@ class LoginViewController: UIViewController, FBSDKLoginButtonDelegate {
                     self.alertUser(title: "Problem With Login", message: message!)
                 }
                 else {
-                    self.performSegue(withIdentifier: "loginSegue", sender: self)
+                    
+                    DBProvider.Instance.usersRef.child(FacebookUser.Instance.id!).observeSingleEvent(of: .value, with: { (snapshot: FIRDataSnapshot) in
+                        if let userData = snapshot.value as? [String: Any] {
+                            if let pageId = userData["employee_venue"] as? String {
+                                DBProvider.Instance.venueInfoRef.child(pageId).child(FIR_EVENT_INFO.NAME).observeSingleEvent(of: .value) { (snapshot: FIRDataSnapshot) in
+                                    if let pageName = snapshot.value as? String {
+                                        FacebookUser.Instance.tokenAuthorized(pageName: pageName, pageId: pageId)
+                                         self.performSegue(withIdentifier: "skipTokenSegue", sender: self)
+                                    }
+                                }
+                            }
+                            else {
+                                self.performSegue(withIdentifier: "loginSegue", sender: self)
+                            }
+                        }
+                    })
+                   
                 }
             })
             
         }
 
     }
+    
     func showLoginButton() {
         self.loginButton.frame = CGRect(x: 0, y: 0, width: 200, height: 50) // change to constraints
         self.loginButton.delegate = self

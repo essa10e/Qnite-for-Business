@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		377DD8D39C8626D28A9A070B /* Pods_Qnite_for_Business.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F944F06617460AEDC1C6666 /* Pods_Qnite_for_Business.framework */; };
+		7905CB5A1F35E5CE00254051 /* VerificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7905CB591F35E5CE00254051 /* VerificationViewController.swift */; };
+		7905CB5C1F3606BD00254051 /* FacebookUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7905CB5B1F3606BD00254051 /* FacebookUser.swift */; };
 		794C468A1F045BB200AF8EA7 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794C46891F045BB200AF8EA7 /* LoginViewController.swift */; };
 		794C468C1F045D2E00AF8EA7 /* AuthProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794C468B1F045D2E00AF8EA7 /* AuthProvider.swift */; };
 		794C468E1F045D5F00AF8EA7 /* FBProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794C468D1F045D5F00AF8EA7 /* FBProvider.swift */; };
@@ -28,6 +30,8 @@
 /* Begin PBXFileReference section */
 		5F944F06617460AEDC1C6666 /* Pods_Qnite_for_Business.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Qnite_for_Business.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6032BFBAC9408832E9CF55DA /* Pods-Qnite for Business.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Qnite for Business.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Qnite for Business/Pods-Qnite for Business.debug.xcconfig"; sourceTree = "<group>"; };
+		7905CB591F35E5CE00254051 /* VerificationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerificationViewController.swift; sourceTree = "<group>"; };
+		7905CB5B1F3606BD00254051 /* FacebookUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FacebookUser.swift; sourceTree = "<group>"; };
 		794C46891F045BB200AF8EA7 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		794C468B1F045D2E00AF8EA7 /* AuthProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthProvider.swift; sourceTree = "<group>"; };
 		794C468D1F045D5F00AF8EA7 /* FBProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FBProvider.swift; sourceTree = "<group>"; };
@@ -68,6 +72,52 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		7905CB561F35E12700254051 /* Providers */ = {
+			isa = PBXGroup;
+			children = (
+				79A17F0B1F02FD2000665DE6 /* DBProvider.swift */,
+				794C468B1F045D2E00AF8EA7 /* AuthProvider.swift */,
+				794C468D1F045D5F00AF8EA7 /* FBProvider.swift */,
+			);
+			name = Providers;
+			sourceTree = "<group>";
+		};
+		7905CB571F35E13900254051 /* View Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				79AE07521F02D251003E7356 /* AnalyticsViewController.swift */,
+				79AE07641F02E031003E7356 /* DailyViewController.swift */,
+				79AE07661F02E53B003E7356 /* CameraViewController.swift */,
+				79AE07681F02E552003E7356 /* ScannerViewController.swift */,
+				794C46891F045BB200AF8EA7 /* LoginViewController.swift */,
+				7905CB591F35E5CE00254051 /* VerificationViewController.swift */,
+			);
+			name = "View Controllers";
+			sourceTree = "<group>";
+		};
+		7905CB581F35E16500254051 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				79AE07571F02D251003E7356 /* Assets.xcassets */,
+				79AE07501F02D251003E7356 /* AppDelegate.swift */,
+				79AE07541F02D251003E7356 /* Main.storyboard */,
+				79AE07591F02D251003E7356 /* LaunchScreen.storyboard */,
+				79AE075C1F02D251003E7356 /* Info.plist */,
+				797E87EB1F045A2600329961 /* GoogleService-Info.plist */,
+				79AE07621F02DF4F003E7356 /* DataGenerator.swift */,
+				795BDEA61F1412F9001582A7 /* Constants.swift */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		7905CB5D1F360F3800254051 /* Objects */ = {
+			isa = PBXGroup;
+			children = (
+				7905CB5B1F3606BD00254051 /* FacebookUser.swift */,
+			);
+			name = Objects;
+			sourceTree = "<group>";
+		};
 		79AE07441F02D250003E7356 = {
 			isa = PBXGroup;
 			children = (
@@ -89,22 +139,10 @@
 		79AE074F1F02D251003E7356 /* Qnite for Business */ = {
 			isa = PBXGroup;
 			children = (
-				79AE07501F02D251003E7356 /* AppDelegate.swift */,
-				79AE07521F02D251003E7356 /* AnalyticsViewController.swift */,
-				79AE07541F02D251003E7356 /* Main.storyboard */,
-				79AE07571F02D251003E7356 /* Assets.xcassets */,
-				79AE07591F02D251003E7356 /* LaunchScreen.storyboard */,
-				79AE075C1F02D251003E7356 /* Info.plist */,
-				797E87EB1F045A2600329961 /* GoogleService-Info.plist */,
-				79AE07621F02DF4F003E7356 /* DataGenerator.swift */,
-				79AE07641F02E031003E7356 /* DailyViewController.swift */,
-				79AE07661F02E53B003E7356 /* CameraViewController.swift */,
-				79AE07681F02E552003E7356 /* ScannerViewController.swift */,
-				79A17F0B1F02FD2000665DE6 /* DBProvider.swift */,
-				794C46891F045BB200AF8EA7 /* LoginViewController.swift */,
-				794C468B1F045D2E00AF8EA7 /* AuthProvider.swift */,
-				794C468D1F045D5F00AF8EA7 /* FBProvider.swift */,
-				795BDEA61F1412F9001582A7 /* Constants.swift */,
+				7905CB5D1F360F3800254051 /* Objects */,
+				7905CB561F35E12700254051 /* Providers */,
+				7905CB571F35E13900254051 /* View Controllers */,
+				7905CB581F35E16500254051 /* Supporting Files */,
 			);
 			path = "Qnite for Business";
 			sourceTree = "<group>";
@@ -249,11 +287,13 @@
 				79AE07671F02E53B003E7356 /* CameraViewController.swift in Sources */,
 				79A17F0C1F02FD2000665DE6 /* DBProvider.swift in Sources */,
 				794C468E1F045D5F00AF8EA7 /* FBProvider.swift in Sources */,
+				7905CB5A1F35E5CE00254051 /* VerificationViewController.swift in Sources */,
 				794C468A1F045BB200AF8EA7 /* LoginViewController.swift in Sources */,
 				79AE07531F02D251003E7356 /* AnalyticsViewController.swift in Sources */,
 				794C468C1F045D2E00AF8EA7 /* AuthProvider.swift in Sources */,
 				79AE07651F02E031003E7356 /* DailyViewController.swift in Sources */,
 				79AE07511F02D251003E7356 /* AppDelegate.swift in Sources */,
+				7905CB5C1F3606BD00254051 /* FacebookUser.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
